@@ -286,7 +286,8 @@ export default function Login() {
 
                 {/* ── Google Login ── */}
                 <a
-                  href="/api/v1/auth/google/redirect"
+                  href={`${import.meta.env.VITE_API_URL}/auth/google/redirect`}
+
                   id="google_login_btn"
                   style={{
                     display: 'flex',
