@@ -1,0 +1,43 @@
+# IDE
+.vscode/
+.idea/
+*.swp
+*.patch
+*.diff
+
+# Node Modules
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Production
+/dist
+
+# Environment Variables
+.env
+.env.production
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ── BACKEND (IMPORTANT) ────────────────────────────────────
+# Kita abaikan folder backend agar tidak masuk ke repo frontend
+kantinkita-api/
+kantinkita_db.sql
+kantinkita_architecture.md
+kantinkita_technical_spec.md
+load-from-sql.load
