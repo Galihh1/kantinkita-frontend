@@ -150,8 +150,21 @@ export default function OtpVerification() {
               Tidak menerima kode? <br />
               <button 
                 type="button"
-                className="text-[#2D6A4F] font-bold hover:text-[#1B4332] transition-colors mt-2"
-                onClick={() => toast.success('Kode baru telah dikirim!')}
+                disabled={loading}
+                className="text-[#2D6A4F] font-bold hover:text-[#1B4332] transition-colors mt-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    await authApi.resendGoogleOtp({ email, intent });
+                    toast.success('Kode OTP baru telah dikirim!');
+                    setOtp(['', '', '', '', '', '']); // Clear input
+                    inputRefs.current[0].focus();
+                  } catch (err) {
+                    toast.error(err.response?.data?.message || 'Gagal mengirim ulang kode');
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
               >
                 Kirim Ulang Email
               </button>
