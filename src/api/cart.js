@@ -2,17 +2,17 @@ import api from './axios';
 
 export const cartApi = {
   getCart: () =>
-    api.get('/api/v1/cart'),
+    api.get('/cart'),
 
   addItem: (menuId, quantity) =>
-    api.post('/api/v1/cart', { menu_id: menuId, quantity }),
+    api.post('/cart', { menu_id: menuId, quantity }),
 
   updateItem: (cartItemId, quantity) =>
-    api.put(`/api/v1/cart/${cartItemId}`, { quantity }),
+    api.put(`/cart/${cartItemId}`, { quantity }),
 
   removeItem: (cartItemId) =>
-    api.delete(`/api/v1/cart/${cartItemId}`),
+    api.delete(`/cart/${cartItemId}`),
 
   clearCart: () =>
-    api.delete('/api/v1/cart'),
+    api.delete('/cart'),
 };

@@ -3,25 +3,25 @@ import api from './axios';
 export const orderApi = {
   // Customer
   checkout: (data) =>
-    api.post('/api/v1/customer/checkout', data),
+    api.post('/customer/checkout', data),
 
   getOrders: (params = {}) =>
-    api.get('/api/v1/customer/orders', { params }),
+    api.get('/customer/orders', { params }),
 
   getOrderDetail: (id) =>
-    api.get(`/api/v1/customer/orders/${id}`),
+    api.get(`/customer/orders/${id}`),
 
   // Staff
   getStaffOrders: (params = {}) =>
-    api.get('/api/v1/staff/orders', { params }),
+    api.get('/staff/orders', { params }),
 
   updateOrderStatus: (id, status, notes = '') =>
-    api.patch(`/api/v1/orders/${id}/status`, { status, notes }),
+    api.patch(`/orders/${id}/status`, { status, notes }),
 
   // Owner
   requestRefund: (id, reason) =>
-    api.post(`/api/v1/orders/${id}/refund`, { reason }),
+    api.post(`/orders/${id}/refund`, { reason }),
 
   getOwnerOrders: (params = {}) =>
-    api.get('/api/v1/owner/orders', { params }),
+    api.get('/owner/orders', { params }),
 };
