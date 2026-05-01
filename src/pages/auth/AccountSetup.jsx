@@ -54,7 +54,7 @@ export default function AccountSetup() {
     setErrors({});
 
     try {
-      const res = await api.put('/api/v1/auth/setup-profile', form);
+      const res = await api.put('/auth/setup-profile', form);
       const responseData = res.data.data;
       
       // Use raw store login to update state WITHOUT triggering the automatic navigate 
