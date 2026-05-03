@@ -31,15 +31,16 @@ export default function AccountSetup() {
       if (user.profile_completed) {
         navigate('/', { replace: true });
       } else {
-        setForm({
+        setForm(prev => ({
+          ...prev,
+          username: user.username || '',
+          full_name: user.full_name || user.name || '',
+          email: user.email || '',
           no_ktp: user.no_ktp || '',
           phone: user.phone || '',
           dob: user.dob || '',
           role: user.role && user.role !== 'customer' ? user.role : 'customer',
-          tenant_name: '',
-          password: '',
-          password_confirmation: '',
-        });
+        }));
       }
     }
   }, [user, navigate]);
