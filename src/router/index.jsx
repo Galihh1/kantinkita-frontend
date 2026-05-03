@@ -105,6 +105,7 @@ export default function AppRouter() {
       <Route element={<ProtectedRoute roles={['owner']} />}>
         <Route element={<OwnerLayout />}>
           <Route path="/owner" element={<F><OwnerDashboard /></F>} />
+          <Route path="/owner/menus" element={<F><StaffMenuMgmt /></F>} />
           <Route path="/owner/report" element={<F><OwnerReport /></F>} />
           <Route path="/owner/refund" element={<F><OwnerRefund /></F>} />
           <Route path="/owner/staff" element={<F><StaffManagement /></F>} />
