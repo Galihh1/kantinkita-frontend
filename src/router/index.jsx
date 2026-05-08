@@ -22,6 +22,7 @@ const TenantDetail = lazy(() => import('../pages/customer/TenantDetail'));
 const Cart = lazy(() => import('../pages/customer/Cart'));
 const Checkout = lazy(() => import('../pages/customer/Checkout'));
 const OrderHistory = lazy(() => import('../pages/customer/OrderHistory'));
+const OrderDetail = lazy(() => import('../pages/customer/OrderDetail'));
 const Profile = lazy(() => import('../pages/customer/Profile'));
 
 // ── Staff ─────────────────────────────────────────────────
@@ -30,10 +31,12 @@ const StaffMenuMgmt = lazy(() => import('../pages/staff/MenuManagement'));
 
 // ── Owner ─────────────────────────────────────────────────
 const OwnerDashboard = lazy(() => import('../pages/owner/Dashboard'));
+const OwnerOrders = lazy(() => import('../pages/owner/Orders'));
 const OwnerReport = lazy(() => import('../pages/owner/Report'));
 const OwnerRefund = lazy(() => import('../pages/owner/Refund'));
 const StaffManagement = lazy(() => import('../pages/owner/StaffManagement'));
 const Subscription = lazy(() => import('../pages/owner/Subscription'));
+const OwnerTenantSettings = lazy(() => import('../pages/owner/TenantSettings'));
 
 // ── Admin ─────────────────────────────────────────────────
 const AdminDashboard = lazy(() => import('../pages/admin/Dashboard'));
@@ -89,6 +92,7 @@ export default function AppRouter() {
           <Route path="/cart" element={<F><Cart /></F>} />
           <Route path="/checkout" element={<F><Checkout /></F>} />
           <Route path="/orders" element={<F><OrderHistory /></F>} />
+          <Route path="/orders/:id" element={<F><OrderDetail /></F>} />
           <Route path="/profile" element={<F><Profile /></F>} />
         </Route>
       </Route>
@@ -105,11 +109,13 @@ export default function AppRouter() {
       <Route element={<ProtectedRoute roles={['owner']} />}>
         <Route element={<OwnerLayout />}>
           <Route path="/owner" element={<F><OwnerDashboard /></F>} />
+          <Route path="/owner/orders" element={<F><OwnerOrders /></F>} />
           <Route path="/owner/menus" element={<F><StaffMenuMgmt /></F>} />
           <Route path="/owner/report" element={<F><OwnerReport /></F>} />
           <Route path="/owner/refund" element={<F><OwnerRefund /></F>} />
           <Route path="/owner/staff" element={<F><StaffManagement /></F>} />
           <Route path="/owner/subscription" element={<F><Subscription /></F>} />
+          <Route path="/owner/settings" element={<F><OwnerTenantSettings /></F>} />
         </Route>
       </Route>
 
