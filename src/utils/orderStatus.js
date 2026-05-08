@@ -110,8 +110,11 @@ export const STAFF_FILTER_TABS = [
 ];
 
 export const CUSTOMER_FILTER_TABS = [
-  { value: '',            label: 'Semua'   },
-  { value: 'pending_payment', label: 'Menunggu' },
-  { value: 'processing',  label: 'Diproses' },
-  { value: 'completed',   label: 'Selesai'  },
+  { value: '',               label: 'Semua'             },
+  { value: 'pending_payment', label: 'Menunggu Bayar'   },
+  { value: 'processing',     label: 'Sedang Diproses'   },
+  { value: 'completed',      label: 'Selesai'           },
+  { value: 'cancelled',      label: 'Dibatalkan'        },
+  { value: 'expired',        label: 'Kadaluarsa'        },
+  { value: 'refunded',       label: 'Dikembalikan'      },
 ];

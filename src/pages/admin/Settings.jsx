@@ -65,10 +65,26 @@ function Section({ icon: Icon, title, color = 'emerald', children, defaultOpen =
 
 // ── Version History ───────────────────────────────────────────────────────────
 function VersionHistory() {
+  const qc = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ['setting-versions'],
     queryFn: () => adminApi.getSettingVersions().then((r) => r.data.data?.data ?? r.data.data ?? []),
   });
+
+  const rollbackMutation = useMutation({
+    mutationFn: ({ key, value }) => adminApi.updateSettings({ [key]: value }),
+    onSuccess: (_, { key }) => {
+      toast.success(`Pengaturan '${key}' berhasil dikembalikan ke nilai sebelumnya.`);
+      qc.invalidateQueries({ queryKey: ['admin-settings'] });
+      qc.invalidateQueries({ queryKey: ['setting-versions'] });
+    },
+    onError: (err) => toast.error(err?.response?.data?.message ?? 'Gagal melakukan rollback pengaturan.'),
+  });
+
+  const handleRollback = (key, oldValue) => {
+    if (!window.confirm(`Kembalikan pengaturan '${key}' ke nilai: "${oldValue ?? '(kosong)'}"?`)) return;
+    rollbackMutation.mutate({ key, value: oldValue ?? '' });
+  };
 
   if (isLoading) return <LoadingSpinner label="Memuat riwayat..." />;
 
@@ -76,18 +92,19 @@ function VersionHistory() {
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="px-6 py-4 bg-gray-50 border-b border-gray-100 flex items-center gap-3">
         <span className="p-2 rounded-lg bg-slate-100"><History size={16} className="text-slate-600" /></span>
-        <h2 className="text-sm font-semibold text-gray-800">Riwayat Perubahan</h2>
+        <h2 className="text-sm font-semibold text-gray-800">Riwayat Perubahan Konfigurasi</h2>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="text-xs text-gray-500 uppercase tracking-wide border-b border-gray-100 bg-gray-50">
               <th className="px-4 py-2.5 text-left">Ver</th>
-              <th className="px-4 py-2.5 text-left">Key</th>
-              <th className="px-4 py-2.5 text-left">Lama</th>
-              <th className="px-4 py-2.5 text-left">Baru</th>
-              <th className="px-4 py-2.5 text-left">Oleh</th>
+              <th className="px-4 py-2.5 text-left">Kunci</th>
+              <th className="px-4 py-2.5 text-left">Nilai Lama</th>
+              <th className="px-4 py-2.5 text-left">Nilai Baru</th>
+              <th className="px-4 py-2.5 text-left">Diubah Oleh</th>
               <th className="px-4 py-2.5 text-left">Waktu</th>
+              <th className="px-4 py-2.5 text-left">Aksi</th>
             </tr>
           </thead>
           <tbody>
@@ -98,20 +115,32 @@ function VersionHistory() {
                 <td className="px-4 py-2.5 text-red-500 text-xs">{v.old_value ?? '—'}</td>
                 <td className="px-4 py-2.5 text-emerald-600 text-xs font-medium">{v.new_value ?? '—'}</td>
                 <td className="px-4 py-2.5 text-gray-600 text-xs">{v.changed_by}</td>
-                <td className="px-4 py-2.5 text-gray-400 text-xs">
+                <td className="px-4 py-2.5 text-gray-500 text-xs">
                   {new Date(v.created_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })}
+                </td>
+                <td className="px-4 py-2.5">
+                  {v.old_value !== null && v.old_value !== undefined && (
+                    <button
+                      onClick={() => handleRollback(v.changed_key, v.old_value)}
+                      disabled={rollbackMutation.isPending}
+                      className="text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-1 hover:bg-amber-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Kembalikan
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
         {(!data || (data?.data ?? data)?.length === 0) && (
-          <p className="text-center py-8 text-gray-400 text-sm">Belum ada riwayat perubahan.</p>
+          <p className="text-center py-8 text-gray-500 text-sm">Belum ada riwayat perubahan konfigurasi.</p>
         )}
       </div>
     </div>
   );
 }
+
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function Settings() {

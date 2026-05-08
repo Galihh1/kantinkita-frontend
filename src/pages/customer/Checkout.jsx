@@ -42,25 +42,25 @@ export default function Checkout() {
         window.snap.pay(snap_token, {
           onSuccess: () => {
             clearCart();
-            toast.success('Pembayaran berhasil! 🎉');
+            toast.success('Pembayaran berhasil. Pesanan sedang diproses.');
             navigate('/orders');
           },
           onPending: () => {
             clearCart();
-            toast('Pembayaran sedang diproses', { icon: '⏳' });
+            toast('Pembayaran masih diproses. Cek status di riwayat pesanan.');
             navigate('/orders');
           },
           onError: (err) => {
             console.error('Midtrans error', err);
-            toast.error('Pembayaran gagal. Coba lagi.');
+            toast.error('Pembayaran gagal. Silakan coba lagi.');
           },
           onClose: () => {
-            toast('Pembayaran dibatalkan', { icon: 'ℹ️' });
+            toast('Pembayaran dibatalkan. Pesanan masih tersimpan.');
           },
         });
       } else {
         clearCart();
-        toast.success('Pesanan dibuat! Harap tunjukkan bukti bayar ke kantin.', { icon: '🎉' });
+        toast.success('Pesanan dibuat. Tunjukkan bukti bayar ke kasir saat mengambil pesanan.');
         setModalOpen(false);
         navigate('/orders');
       }
@@ -86,7 +86,7 @@ export default function Checkout() {
         ))}
         {notes && (
           <div className="pt-2 mt-2 border-t border-gray-50">
-            <p className="text-xs text-gray-400">Catatan: {notes}</p>
+            <p className="text-xs text-gray-500">Catatan: {notes}</p>
           </div>
         )}
       </div>
@@ -95,7 +95,7 @@ export default function Checkout() {
       <div className="bg-white rounded-xl border border-gray-100 p-4 space-y-1.5">
         <h3 className="text-sm font-semibold text-gray-800 mb-2">Info Pelanggan</h3>
         <p className="text-sm text-gray-600">{user?.full_name}</p>
-        <p className="text-xs text-gray-400">{user?.phone}</p>
+        <p className="text-xs text-gray-500">{user?.phone}</p>
       </div>
 
       {/* Payment Summary */}
@@ -115,7 +115,7 @@ export default function Checkout() {
 
       <div className="space-y-3 pt-2">
         <Button fullWidth variant="secondary" size="lg" onClick={() => setModalOpen(true)}>
-          💳 Pilih Pembayaran & Bayar
+          Pilih Pembayaran &amp; Bayar
         </Button>
         <Button fullWidth variant="outline" size="lg" onClick={() => navigate(-1)}>
           Cek Kembali Pesanan
@@ -172,7 +172,7 @@ export default function Checkout() {
                   />
                   <div>
                     <p className="font-bold text-gray-800 text-sm">{method.name}</p>
-                    <p className="text-xs text-gray-400">{method.desc}</p>
+                    <p className="text-xs text-gray-500">{method.desc}</p>
                   </div>
                 </label>
               ))}

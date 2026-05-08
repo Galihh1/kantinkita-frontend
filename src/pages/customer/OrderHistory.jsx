@@ -15,6 +15,8 @@ export default function OrderHistory() {
     queryKey: ['orders', { status, page }],
     queryFn: () => orderApi.getOrders({ status: status || undefined, page }).then((r) => r.data),
     staleTime: 30_000,
+    // Auto-refresh tiap 60 detik agar customer melihat perubahan status tanpa refresh manual
+    refetchInterval: 60_000,
   });
 
   const result     = data?.data;
