@@ -36,26 +36,27 @@ export default function OwnerRefund() {
     <div className="space-y-5">
       <div>
         <h1 className="text-xl font-bold text-gray-800">Manajemen Refund</h1>
-        <p className="text-sm text-gray-400">Proses pengembalian dana untuk pesanan yang sudah dibayar</p>
+        <p className="text-sm text-gray-500">Proses pengembalian dana untuk pesanan yang sudah dibayar</p>
       </div>
 
       {/* Info Banner */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-700">
-        ⚠️ Refund hanya dapat dilakukan untuk pesanan dengan status <strong>Dibayar</strong> atau <strong>Diproses</strong>.
+      <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+        Refund hanya dapat dilakukan untuk pesanan berstatus <strong>Dibayar</strong> atau <strong>Sedang Diproses</strong>.
+        Dana akan dikembalikan melalui Midtrans dalam 1-5 hari kerja.
       </div>
 
       {isLoading ? <SkeletonList count={3} /> : orders.length === 0 ? (
-        <EmptyState icon="↩️" title="Tidak ada pesanan yang bisa direfund" description="Hanya pesanan berstatus Dibayar atau Diproses yang dapat direfund" />
+        <EmptyState title="Tidak ada pesanan yang dapat direfund" description="Hanya pesanan berstatus Dibayar atau Sedang Diproses yang dapat diproses refundnya." />
       ) : (
         <div className="space-y-3">
           {orders.map((order) => (
             <div key={order.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 flex items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-mono text-gray-400">#{order.order_number}</p>
+                <p className="text-xs font-mono text-gray-500">#{order.order_number}</p>
                 <p className="text-sm font-semibold text-gray-800 mt-0.5">
                   {order.user?.full_name}
                 </p>
-                <p className="text-xs text-gray-400 mt-0.5">{formatDateTime(order.created_at)}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{formatDateTime(order.created_at)}</p>
                 <div className="flex items-center gap-2 mt-1.5">
                   <span className="text-sm font-bold text-[#2D6A4F]">{formatCurrency(order.grand_total)}</span>
                   <Badge variant={order.status === 'paid' ? 'info' : 'orange'} dot>
@@ -103,7 +104,7 @@ export default function OwnerRefund() {
               rows={3}
               required
             />
-            <p className="text-xs text-gray-400">Refund akan diproses oleh Midtrans dan dana dikembalikan ke customer dalam 1-5 hari kerja.</p>
+            <p className="text-xs text-gray-500">Dana akan dikembalikan ke metode pembayaran awal customer dalam 1-5 hari kerja melalui Midtrans.</p>
           </div>
         )}
       </Modal>

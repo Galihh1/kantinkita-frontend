@@ -21,7 +21,7 @@ export default function OwnerReport() {
 
   const params = { start_date: startDate, end_date: endDate, page };
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['owner-sales', params],
     queryFn: () => reportApi.getSalesReport(params).then((r) => r.data),
   });
@@ -54,7 +54,7 @@ export default function OwnerReport() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-gray-800">Laporan Penjualan</h1>
-          <p className="text-sm text-gray-400">Export laporan dalam format PDF atau CSV</p>
+          <p className="text-sm text-gray-500">Lihat dan ekspor laporan pesanan dalam format PDF atau CSV</p>
         </div>
         <div className="flex gap-2">
           <Button size="sm" variant="ghost" loading={exporting === 'pdf'} onClick={() => handleExport('pdf')}
@@ -89,7 +89,7 @@ export default function OwnerReport() {
             { label: 'Order Selesai', value: summary.completed_orders ?? 0 },
           ].map((s) => (
             <div key={s.label} className="bg-white rounded-xl border border-gray-100 p-4 shadow-sm">
-              <p className="text-xs text-gray-400">{s.label}</p>
+              <p className="text-xs text-gray-500">{s.label}</p>
               <p className="text-lg font-bold text-gray-800 mt-1">{s.value}</p>
             </div>
           ))}
@@ -110,8 +110,10 @@ export default function OwnerReport() {
             <tbody className="divide-y divide-gray-50">
               {isLoading ? (
                 <tr><td colSpan={5} className="px-4 py-8"><SkeletonList count={3} /></td></tr>
+              ) : isError ? (
+                <tr><td colSpan={5}><EmptyState title="Gagal memuat laporan" description="Periksa koneksi Anda atau coba lagi nanti." /></td></tr>
               ) : orders.length === 0 ? (
-                <tr><td colSpan={5}><EmptyState icon="📊" title="Tidak ada data" description="Ubah rentang tanggal" /></td></tr>
+                <tr><td colSpan={5}><EmptyState title="Tidak ada data penjualan" description="Tidak ada pesanan selesai pada rentang tanggal ini." /></td></tr>
               ) : orders.map((order) => (
                 <tr key={order.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 font-mono text-xs text-gray-500">#{order.order_number}</td>
