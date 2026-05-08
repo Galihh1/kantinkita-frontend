@@ -59,15 +59,26 @@ export default function RolePermissionManager() {
     setPendingPermissions(role.permissions?.map(p => p.id) || []);
   };
 
-  // 3. Group permissions by resource
+  // 3. Group permissions by resource — gunakan slug untuk deteksi action (lebih robust dari name)
   const matrixData = useMemo(() => {
     const grouped = {};
     permissionsList.forEach(p => {
-      if (!grouped[p.resource]) grouped[p.resource] = {};
-      
-      const action = ACTIONS.find(a => p.name.startsWith(a));
+      // resource bisa 'Menu', 'Pesanan', dll. Normalize ke Title Case
+      const resource = p.resource
+        ? p.resource.charAt(0).toUpperCase() + p.resource.slice(1)
+        : 'Lainnya';
+
+      if (!grouped[resource]) grouped[resource] = {};
+
+      // Deteksi action dari slug: 'read-menu' → 'Read', 'create-menu' → 'Create'
+      // Lebih reliable daripada nama karena slug selalu lowercase dan konsisten
+      const slugAction = p.slug?.split('-')[0] ?? '';
+      const action = ACTIONS.find(a => a.toLowerCase() === slugAction)
+        // Fallback: cek dari nama permission (backward compat)
+        ?? ACTIONS.find(a => p.name?.startsWith(a));
+
       if (action) {
-        grouped[p.resource][action] = p;
+        grouped[resource][action] = p;
       }
     });
     return grouped;

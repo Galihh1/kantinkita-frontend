@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { useUpdateOrderStatus } from '../../hooks/useOrders';
 import { useRealtime, playNotificationSound } from '../../hooks/useRealtime';
@@ -20,6 +21,7 @@ const STATUS_COLOR = {
 
 export default function StaffDashboard() {
   const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('paid');
   const qc = useQueryClient();
   const { mutate: updateStatus, isPending } = useUpdateOrderStatus();
@@ -89,7 +91,11 @@ export default function StaffDashboard() {
       ) : (
         <div className="space-y-3">
           {orders.map((order) => (
-            <div key={order.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 space-y-3">
+            <div
+              key={order.id}
+              className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 space-y-3 hover:border-[#2D6A4F]/30 hover:shadow-md transition-all cursor-pointer"
+              onClick={() => navigate(`/staff/orders/${order.id}`)}
+            >
               {/* Header */}
               <div className="flex items-start justify-between gap-2">
                 <div>

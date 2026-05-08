@@ -15,8 +15,14 @@ export const orderApi = {
   getStaffOrders: (params = {}) =>
     api.get('/staff/orders', { params }),
 
-  updateOrderStatus: (id, status, notes = '') =>
-    api.patch(`/orders/${id}/status`, { status, notes }),
+  getStaffOrderDetail: (id) =>
+    api.get(`/staff/orders/${id}`),
+
+  updateStaffOrderStatus: (id, status) =>
+    api.put(`/staff/orders/${id}/status`, { status }),
+
+  confirmStaffPayment: (id, data) =>
+    api.post(`/staff/orders/${id}/confirm-payment`, data),
 
   // Owner
   requestRefund: (id, reason) =>

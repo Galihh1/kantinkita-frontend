@@ -60,7 +60,8 @@ export default function PermissionManagement() {
   const openModal = (p = null) => {
     if (p) {
       setEditing(p);
-      setForm({ name: p.name, group: p.group, description: p.description || '' });
+      // API returns group_name (DB column) — map to form field 'group'
+      setForm({ name: p.name, group: p.group_name ?? p.group ?? 'general', description: p.description || '' });
     } else {
       setEditing(null);
       setForm(EMPTY_FORM);
@@ -75,16 +76,18 @@ export default function PermissionManagement() {
     setForm(EMPTY_FORM);
   };
 
-  const filteredPermissions = permissions.filter(p => 
-    p.name.toLowerCase().includes(query.toLowerCase()) || 
-    p.group.toLowerCase().includes(query.toLowerCase())
+  const filteredPermissions = permissions.filter(p =>
+    p.name?.toLowerCase().includes(query.toLowerCase()) ||
+    (p.group_name ?? p.group ?? '').toLowerCase().includes(query.toLowerCase())
   );
 
   const groupedPermissions = React.useMemo(() => {
     const groups = {};
     filteredPermissions.forEach(p => {
-      if (!groups[p.group]) groups[p.group] = [];
-      groups[p.group].push(p);
+      // group_name is the DB column name; fall back to group for forward-compat
+      const g = p.group_name ?? p.group ?? 'general';
+      if (!groups[g]) groups[g] = [];
+      groups[g].push(p);
     });
     return groups;
   }, [filteredPermissions]);
@@ -134,7 +137,7 @@ export default function PermissionManagement() {
               <div key={group} className="p-6 space-y-4">
                 <div className="flex items-center gap-2">
                   <Badge variant="gray" size="sm" className="uppercase font-black text-[9px] tracking-[0.2em] italic bg-gray-100 text-gray-500 border-none px-2 py-1">
-                    Grup: {group}
+                    Grup: {p.group_name ?? p.group ?? group}
                   </Badge>
                   <div className="h-px flex-1 bg-gray-50" />
                 </div>
