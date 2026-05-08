@@ -40,4 +40,15 @@ export const adminApi = {
   updateTenant: (id, data) => api.put(`/admin/tenants/${id}`, data),
   deleteTenant: (id) => api.delete(`/admin/tenants/${id}`),
   toggleTenant: (id) => api.patch(`/admin/tenants/${id}/toggle`),
+
+  // System Settings — membaca langsung dari DB, tersimpan di system_settings table
+  getSettings: (group) => api.get('/admin/settings', { params: group ? { group } : {} }),
+  updateSettings: (settings) =>
+    api.put('/admin/settings', {
+      settings: Object.entries(settings).map(([key, value]) => ({ key, value: String(value ?? '') })),
+    }),
+  getSettingVersions: () => api.get('/admin/settings/versions'),
 };
+
+// Sinkronisasi Role Owner — dipanggil oleh Owner sendiri jika menu tidak muncul
+export const syncMyRole = () => api.post('/owner/sync-my-role');
