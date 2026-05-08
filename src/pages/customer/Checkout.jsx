@@ -19,9 +19,8 @@ export default function Checkout() {
   const notes      = location.state?.notes ?? '';
 
   const subtotal   = getTotalPrice();
-  const feePercent = 2;
-  const fee        = Math.ceil(subtotal * feePercent / 100);
-  const total      = subtotal + fee;
+  // Fee dihitung server-side dari system_settings, bukan hardcode.
+  // Nilai aktual ada di res.data.data.order.service_fee setelah checkout.
 
   const processCheckout = async () => {
     setLoading(true);
@@ -104,12 +103,13 @@ export default function Checkout() {
         <div className="flex justify-between text-sm text-gray-600">
           <span>Subtotal</span><span>{formatCurrency(subtotal)}</span>
         </div>
-        <div className="flex justify-between text-sm text-gray-600">
-          <span>Biaya Layanan ({feePercent}%)</span><span>{formatCurrency(fee)}</span>
+        <div className="flex justify-between text-sm text-gray-500">
+          <span>Biaya Layanan</span>
+          <span className="text-xs italic">dihitung saat konfirmasi</span>
         </div>
         <div className="border-t border-gray-100 pt-2.5 flex justify-between font-bold text-gray-800 text-base">
-          <span>Total</span>
-          <span className="text-[#2D6A4F]">{formatCurrency(total)}</span>
+          <span>Estimasi Total</span>
+          <span className="text-[#2D6A4F]">{formatCurrency(subtotal)}</span>
         </div>
       </div>
 
@@ -145,9 +145,10 @@ export default function Checkout() {
       >
         <div className="space-y-5">
           <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 flex justify-between items-center text-lg">
-            <span className="font-bold text-gray-600">Total Tagihan:</span>
-            <span className="font-bold text-[#2D6A4F]">{formatCurrency(total)}</span>
+            <span className="font-bold text-gray-600">Estimasi Total:</span>
+            <span className="font-bold text-[#2D6A4F]">{formatCurrency(subtotal)}</span>
           </div>
+          <p className="text-xs text-gray-500 text-center">Total akhir termasuk biaya layanan akan tampil setelah konfirmasi.</p>
 
           <div>
             <p className="font-semibold text-gray-700 text-sm mb-3">Pilih Metode Pembayaran</p>

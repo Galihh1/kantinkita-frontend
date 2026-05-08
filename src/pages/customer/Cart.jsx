@@ -12,9 +12,8 @@ export default function Cart() {
   const [notes, setNotes] = useState('');
 
   const subtotal   = getTotalPrice();
-  const feePercent = 2;
-  const fee        = Math.ceil(subtotal * feePercent / 100);
-  const total      = subtotal + fee;
+  // Biaya layanan dihitung server-side saat checkout (berdasarkan konfigurasi sistem).
+  // Jangan hardcode — nilai ini bisa berbeda dari yang diatur admin.
 
   if (items.length === 0) {
     return (
@@ -99,13 +98,13 @@ export default function Cart() {
           <span>Subtotal ({items.reduce((s, i) => s + i.quantity, 0)} item)</span>
           <span>{formatCurrency(subtotal)}</span>
         </div>
-        <div className="flex justify-between text-sm text-gray-600">
-          <span>Biaya Layanan ({feePercent}%)</span>
-          <span>{formatCurrency(fee)}</span>
+        <div className="flex justify-between text-sm text-gray-500">
+          <span>Biaya Layanan</span>
+          <span className="text-xs italic">dihitung saat konfirmasi</span>
         </div>
         <div className="border-t border-gray-100 pt-2.5 flex justify-between font-bold text-gray-800">
-          <span>Total</span>
-          <span className="text-[#2D6A4F]">{formatCurrency(total)}</span>
+          <span>Estimasi Total</span>
+          <span className="text-[#2D6A4F]">{formatCurrency(subtotal)}</span>
         </div>
       </div>
 
@@ -113,9 +112,9 @@ export default function Cart() {
         fullWidth
         variant="primary"
         size="lg"
-        onClick={() => navigate('/checkout', { state: { notes, total, fee } })}
+        onClick={() => navigate('/checkout', { state: { notes } })}
       >
-        Lanjut ke Pembayaran
+        Lanjut ke Konfirmasi Pesanan
       </Button>
     </div>
   );
