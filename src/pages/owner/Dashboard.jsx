@@ -4,7 +4,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer,
 } from 'recharts';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { reportApi } from '../../api/report';
 import Button from '../../components/ui/Button';
 import { SkeletonList } from '../../components/ui/Skeleton';
@@ -15,6 +15,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { subDays } from 'date-fns';
 import clsx from 'clsx';
+import { useOwnerSubscription } from '../../hooks/useOwnerSubscription';
 
 const fmtCurrencyAxis = (v) => formatCurrencyShort(v);
 const CustomTooltip = ({ active, payload, label }) => {
@@ -37,6 +38,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function OwnerDashboard() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [showWelcome, setShowWelcome] = useState(location.state?.showWelcome || false);
   const welcomeData = location.state || {};
 
@@ -44,9 +46,14 @@ export default function OwnerDashboard() {
   const [startDate, setStartDate] = useState(formatDateInput(subDays(today, 6)));
   const [endDate,   setEndDate]   = useState(formatDateInput(today));
 
+  // Real-time subscription status
+  const { status: subStatus, isActive, trialActive, trialDays, subDaysLeft } = useOwnerSubscription();
+
   const { data, isLoading } = useQuery({
     queryKey: ['owner-report', { startDate, endDate }],
     queryFn: () => reportApi.getSalesReport({ start_date: startDate, end_date: endDate }).then((r) => r.data.summary),
+    // Auto-refresh data setiap 30 detik
+    refetchInterval: 30_000,
   });
 
   const stats     = data ?? {};
@@ -88,6 +95,38 @@ export default function OwnerDashboard() {
               Mulai Kelola Bisnis
             </Button>
           </div>
+        </div>
+      )}
+
+      {/* Subscription Alert Banner — muncul jika trial / expired */}
+      {(subStatus === 'trial' || subStatus === 'expired') && (
+        <div className={clsx(
+          'rounded-2xl p-4 flex items-center justify-between gap-4',
+          subStatus === 'expired'
+            ? 'bg-red-50 border border-red-200'
+            : 'bg-amber-50 border border-amber-200'
+        )}>
+          <div>
+            <p className={clsx('text-sm font-bold', subStatus === 'expired' ? 'text-red-800' : 'text-amber-800')}>
+              {subStatus === 'expired' ? '⚠️ Langganan Anda telah berakhir' : `🕐 Trial tersisa ${trialDays} hari`}
+            </p>
+            <p className={clsx('text-xs mt-0.5', subStatus === 'expired' ? 'text-red-600' : 'text-amber-600')}>
+              {subStatus === 'expired'
+                ? 'Beberapa fitur mungkin terbatas. Segera pilih paket untuk melanjutkan.'
+                : 'Pilih paket sebelum masa trial berakhir agar tidak kehilangan akses.'}
+            </p>
+          </div>
+          <button
+            onClick={() => navigate('/owner/subscription')}
+            className={clsx(
+              'flex-shrink-0 text-xs font-semibold px-4 py-2 rounded-xl transition',
+              subStatus === 'expired'
+                ? 'bg-red-600 text-white hover:bg-red-700'
+                : 'bg-amber-500 text-white hover:bg-amber-600'
+            )}
+          >
+            Pilih Paket
+          </button>
         </div>
       )}
 
