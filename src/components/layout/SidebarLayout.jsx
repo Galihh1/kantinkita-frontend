@@ -17,21 +17,60 @@ import { useOwnerSubscription } from '../../hooks/useOwnerSubscription';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../api/axios';
 
-// ── New-order badge (polls every 30s for new orders) ──────────────────────────
-function useNewOrderCount(enabled) {
-  const { data } = useQuery({
-    queryKey: ['new-order-badge'],
+// ── Badge counts (polls every 30s) ────────────────────────────────────────────
+function useBadgeCounts(navItems) {
+  const { isRole } = useAuthStore();
+  const isAdmin = isRole('admin');
+  const isOwner = isRole('owner');
+  const isStaff = isRole('staff');
+
+  const needsOrders     = navItems.some((i) => i.badgeKey === 'orders');
+  const needsPendingSub = navItems.some((i) => i.badgeKey === 'pending-subscriptions');
+  const needsErrors     = navItems.some((i) => i.badgeKey === 'open-errors');
+
+  const { data: ordersCount = 0 } = useQuery({
+    queryKey: ['badge-orders', isOwner ? 'owner' : 'staff'],
     queryFn: () =>
-      api.get('/owner/orders', { params: { status: 'paid', per_page: 1 } })
+      api.get(isOwner ? '/owner/orders' : '/staff/orders', { params: { status: 'paid', per_page: 1 } })
         .then((r) => r.data.data?.total ?? r.data.data?.meta?.total ?? 0)
         .catch(() => 0),
-    enabled,
+    enabled: needsOrders && (isOwner || isStaff),
     refetchInterval: 30_000,
     staleTime: 20_000,
     retry: false,
   });
-  return data ?? 0;
+
+  const { data: pendingSubCount = 0 } = useQuery({
+    queryKey: ['badge-pending-subs'],
+    queryFn: () =>
+      api.get('/admin/subscriptions', { params: { approval_status: 'pending', per_page: 1 } })
+        .then((r) => r.data.data?.total ?? r.data.data?.meta?.total ?? 0)
+        .catch(() => 0),
+    enabled: needsPendingSub && isAdmin,
+    refetchInterval: 30_000,
+    staleTime: 20_000,
+    retry: false,
+  });
+
+  const { data: openErrorCount = 0 } = useQuery({
+    queryKey: ['badge-open-errors'],
+    queryFn: () =>
+      api.get('/admin/error-logs', { params: { resolved_status: 'open', per_page: 1 } })
+        .then((r) => r.data.data?.total ?? r.data.data?.meta?.total ?? 0)
+        .catch(() => 0),
+    enabled: needsErrors && isAdmin,
+    refetchInterval: 60_000,
+    staleTime: 30_000,
+    retry: false,
+  });
+
+  return {
+    'orders':                 ordersCount,
+    'pending-subscriptions':  pendingSubCount,
+    'open-errors':            openErrorCount,
+  };
 }
+
 
 // ── Sidebar Component ──────────────────────────────────────────────────────────
 function SidebarLayout({ navItems }) {
@@ -41,8 +80,8 @@ function SidebarLayout({ navItems }) {
   const isOwner = isRole('owner');
   const isStaff = isRole('staff');
 
-  const { status: subStatus, isActive, trialActive } = useOwnerSubscription();
-  const newOrderCount = useNewOrderCount(isOwner || isStaff);
+  const { status: subStatus } = useOwnerSubscription();
+  const badgeCounts = useBadgeCounts(navItems);
 
   // Close mobile sidebar on navigation
   useEffect(() => { setOpen(false); }, []);
@@ -100,9 +139,7 @@ function SidebarLayout({ navItems }) {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {filteredNavItems.map(({ path, label, icon: Icon, badgeKey }) => {
-          const showBadge = badgeKey === 'orders' && newOrderCount > 0;
-          return (
+        {filteredNavItems.map(({ path, label, icon: Icon, badgeKey }) => (
             <NavLink
               key={path}
               to={path}
@@ -119,14 +156,13 @@ function SidebarLayout({ navItems }) {
             >
               <Icon className="w-5 h-5 flex-shrink-0" />
               <span className="flex-1">{label}</span>
-              {showBadge && (
+              {badgeKey && badgeCounts[badgeKey] > 0 && (
                 <span className="bg-emerald-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full min-w-[18px] text-center leading-none">
-                  {newOrderCount > 99 ? '99+' : newOrderCount}
+                  {badgeCounts[badgeKey] > 99 ? '99+' : badgeCounts[badgeKey]}
                 </span>
               )}
             </NavLink>
-          );
-        })}
+        ))}
       </nav>
 
       {/* Subscription Status Widget (owner only) */}

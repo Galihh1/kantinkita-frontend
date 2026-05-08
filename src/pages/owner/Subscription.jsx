@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckCircleIcon, XCircleIcon, ClockIcon } from '@heroicons/react/24/solid';
-import { SparklesIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
+import { SparklesIcon, RocketLaunchIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { reportApi } from '../../api/report';
 import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
@@ -16,16 +16,36 @@ export default function Subscription() {
   const qc = useQueryClient();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  // Track previous approval status to detect admin approval in real-time
+  const prevStatusRef = useRef(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['owner-subscription'],
     queryFn: () => reportApi.getSubscription().then((r) => r.data.data),
+    // Poll setiap 30 detik untuk deteksi approval admin secara real-time
+    refetchInterval: 30_000,
+    staleTime: 15_000,
   });
 
   const { data: plansData = [] } = useQuery({
     queryKey: ['subscription-plans'],
     queryFn: () => reportApi.getSubscriptionPlans().then((r) => r.data.data),
   });
+
+  // Auto-detect ketika admin menyetujui langganan (pending -> active)
+  useEffect(() => {
+    if (!data) return;
+    const currentStatus = data?.subscription?.approval_status;
+    const isNowActive   = data?.is_active;
+    if (prevStatusRef.current === 'pending' && isNowActive) {
+      toast.success(
+        '🎉 Langganan Anda telah disetujui oleh Admin! Silakan refresh halaman.',
+        { duration: 8000, icon: '✅' }
+      );
+      qc.invalidateQueries({ queryKey: ['owner-subscription-status'] });
+    }
+    prevStatusRef.current = currentStatus;
+  }, [data, qc]);
 
   const plans = Array.isArray(plansData) ? plansData : [];
 
@@ -48,19 +68,30 @@ export default function Subscription() {
 
   const isSubActive = data?.is_active ?? false;
   const trialActive = data?.trial_active ?? false;
-  const trialDays = data?.trial_days_remaining ?? 0;
+  const trialDays   = data?.trial_days_remaining ?? 0;
   const subDaysLeft = data?.days_remaining ?? 0;
-  const currentSub = data?.subscription;
-  const hasPending = currentSub?.approval_status === 'pending';
+  const currentSub  = data?.subscription;
+  const hasPending  = currentSub?.approval_status === 'pending';
 
   return (
     <div className="space-y-8 max-w-3xl">
-      <div>
-        <h1 className="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2">
-          <RocketLaunchIcon className="w-7 h-7 text-[#2D6A4F]" />
-          Langganan & Paket
-        </h1>
-        <p className="text-gray-500 text-sm mt-1">Kelola paket berlangganan kantin Anda</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2">
+            <RocketLaunchIcon className="w-7 h-7 text-[#2D6A4F]" />
+            Langganan &amp; Paket
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">Kelola paket berlangganan kantin Anda</p>
+        </div>
+        {/* Manual refresh button */}
+        <button
+          onClick={() => qc.invalidateQueries({ queryKey: ['owner-subscription'] })}
+          className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition"
+          title="Refresh status langganan"
+        >
+          <ArrowPathIcon className="w-4 h-4" />
+          Refresh
+        </button>
       </div>
 
       {/* Trial Status Banner */}
