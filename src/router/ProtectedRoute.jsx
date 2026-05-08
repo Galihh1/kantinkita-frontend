@@ -14,7 +14,14 @@ export default function ProtectedRoute({ roles = [] }) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (user && user.profile_completed === false && location.pathname !== '/account-setup') {
+  // Hanya customer OAuth yang belum setup profile yang perlu ke /account-setup.
+  // Staff, owner, admin tidak perlu — mereka sudah dibuatkan lengkap oleh sistem/owner.
+  if (
+    user &&
+    user.role === 'customer' &&
+    user.profile_completed === false &&
+    location.pathname !== '/account-setup'
+  ) {
     return <Navigate to="/account-setup" replace />;
   }
 

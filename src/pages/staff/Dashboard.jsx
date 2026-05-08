@@ -31,7 +31,8 @@ export default function StaffDashboard() {
     staleTime: 0,
   });
 
-  const tenantId = user?.tenant_id ?? orders[0]?.tenant_id;
+  // staff_tenant_id di-inject oleh backend (login/me) agar realtime bekerja sebelum orders dimuat
+  const tenantId = user?.staff_tenant_id ?? user?.tenant?.id ?? orders[0]?.tenant_id;
 
   // Real-time via Pusher
   useRealtime(tenantId ? `tenant.${tenantId}` : null, {
