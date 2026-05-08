@@ -5,14 +5,14 @@ import { useOwnerSubscription } from '../../hooks/useOwnerSubscription';
 import { syncMyRole } from '../../api/admin';
 import toast from 'react-hot-toast';
 import {
-  CheckCircle, Clock, AlertTriangle, Loader2,
-  RefreshCw, Star, ChevronRight,
-} from 'lucide-react';
+  CheckCircleIcon, ClockIcon, ExclamationTriangleIcon,
+  ArrowPathIcon, StarIcon, ChevronRightIcon,
+} from '@heroicons/react/24/outline';
 
 // ── Status config ─────────────────────────────────────────────────────────────
 const STATUS_CONFIG = {
   active: {
-    icon: CheckCircle,
+    icon: CheckCircleIcon,
     color: 'text-emerald-600',
     bg: 'bg-emerald-50',
     border: 'border-emerald-200',
@@ -20,7 +20,7 @@ const STATUS_CONFIG = {
     dot: 'bg-emerald-500 animate-pulse',
   },
   trial: {
-    icon: Clock,
+    icon: ClockIcon,
     color: 'text-amber-600',
     bg: 'bg-amber-50',
     border: 'border-amber-200',
@@ -28,7 +28,7 @@ const STATUS_CONFIG = {
     dot: 'bg-amber-500 animate-pulse',
   },
   pending: {
-    icon: Clock,
+    icon: ClockIcon,
     color: 'text-blue-600',
     bg: 'bg-blue-50',
     border: 'border-blue-200',
@@ -36,7 +36,7 @@ const STATUS_CONFIG = {
     dot: 'bg-blue-500 animate-pulse',
   },
   expired: {
-    icon: AlertTriangle,
+    icon: ExclamationTriangleIcon,
     color: 'text-red-600',
     bg: 'bg-red-50',
     border: 'border-red-200',
@@ -70,8 +70,8 @@ export function SyncRoleButton({ compact = false }) {
         }`}
     >
       {mutation.isPending
-        ? <Loader2 size={13} className="animate-spin flex-shrink-0" />
-        : <RefreshCw size={13} className="flex-shrink-0" />
+        ? <ArrowPathIcon className="w-3 h-3 animate-spin flex-shrink-0" />
+        : <ArrowPathIcon className="w-3 h-3 flex-shrink-0" />
       }
       {compact ? 'Sinkronkan akun' : 'Sinkronkan Role Akun'}
     </button>
@@ -87,7 +87,7 @@ export default function SubscriptionStatusWidget() {
   if (isLoading) {
     return (
       <div className="mx-3 mb-3 px-3 py-2 bg-gray-50 rounded-xl flex items-center gap-2">
-        <Loader2 size={13} className="animate-spin text-gray-400" />
+        <ArrowPathIcon className="w-3 h-3 animate-spin text-gray-400" />
         <span className="text-xs text-gray-400">Memuat status...</span>
       </div>
     );
@@ -117,7 +117,7 @@ export default function SubscriptionStatusWidget() {
           </p>
           <p className="text-[10px] text-gray-500 truncate">{description}</p>
         </div>
-        <Icon size={14} className={`flex-shrink-0 ${cfg.color}`} />
+        <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${cfg.color}`} />
       </button>
 
       {/* Expand actions */}
@@ -128,9 +128,9 @@ export default function SubscriptionStatusWidget() {
             className={`flex items-center justify-between w-full text-[11px] font-medium ${cfg.color} hover:underline`}
           >
             <span className="flex items-center gap-1">
-              <Star size={11} /> Kelola Langganan
+              <StarIcon className="w-3 h-3" /> Kelola Langganan
             </span>
-            <ChevronRight size={11} />
+            <ChevronRightIcon className="w-3 h-3" />
           </button>
           <SyncRoleButton compact />
         </div>

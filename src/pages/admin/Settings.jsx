@@ -5,10 +5,10 @@ import Button from '../../components/ui/Button';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import toast from 'react-hot-toast';
 import {
-  Settings as SettingsIcon, DollarSign, CreditCard, Package,
-  Globe, History, Save, RefreshCw, ChevronDown, ChevronUp,
-  CheckCircle, AlertTriangle, Clock,
-} from 'lucide-react';
+  Cog6ToothIcon, CurrencyDollarIcon, CreditCardIcon, ArchiveBoxIcon,
+  GlobeAltIcon, ClockIcon, ArrowDownTrayIcon, ArrowPathIcon,
+  ChevronDownIcon, ChevronUpIcon, CheckCircleIcon, ExclamationTriangleIcon,
+} from '@heroicons/react/24/outline';
 
 // ── Field Component ───────────────────────────────────────────────────────────
 function SettingField({ fieldKey, label, type = 'text', hint, options, value, onChange }) {
@@ -52,11 +52,11 @@ function Section({ icon: Icon, title, color = 'emerald', children, defaultOpen =
       >
         <div className="flex items-center gap-3">
           <span className={`p-2 rounded-lg bg-${color}-100`}>
-            <Icon size={16} className={`text-${color}-600`} />
+          <Icon className={`w-4 h-4 text-${color}-600`} />
           </span>
           <h2 className="text-sm font-semibold text-gray-800">{title}</h2>
         </div>
-        {open ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
+        {open ? <ChevronUpIcon className="w-4 h-4 text-gray-400" /> : <ChevronDownIcon className="w-4 h-4 text-gray-400" />}
       </button>
       {open && <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-5">{children}</div>}
     </div>
@@ -91,7 +91,7 @@ function VersionHistory() {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="px-6 py-4 bg-gray-50 border-b border-gray-100 flex items-center gap-3">
-        <span className="p-2 rounded-lg bg-slate-100"><History size={16} className="text-slate-600" /></span>
+        <span className="p-2 rounded-lg bg-slate-100"><ClockIcon className="w-4 h-4 text-slate-600" /></span>
         <h2 className="text-sm font-semibold text-gray-800">Riwayat Perubahan Konfigurasi</h2>
       </div>
       <div className="overflow-x-auto">
@@ -185,7 +185,7 @@ export default function Settings() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-            <SettingsIcon size={22} className="text-emerald-600" />
+            <Cog6ToothIcon className="w-5 h-5 text-emerald-600" />
             Pengaturan Sistem
           </h1>
           <p className="text-sm text-gray-400 mt-0.5">
@@ -195,7 +195,7 @@ export default function Settings() {
         <div className="flex items-center gap-3">
           {saved && (
             <span className="flex items-center gap-1.5 text-sm text-emerald-600 font-medium">
-              <CheckCircle size={16} /> Tersimpan
+              <CheckCircleIcon className="w-4 h-4" /> Tersimpan
             </span>
           )}
           <Button
@@ -205,7 +205,7 @@ export default function Settings() {
             onClick={() => saveMutation.mutate()}
             className="flex items-center gap-2"
           >
-            <Save size={16} /> Simpan Semua
+            <ArrowDownTrayIcon className="w-4 h-4" /> Simpan Semua
           </Button>
         </div>
       </div>
@@ -236,7 +236,7 @@ export default function Settings() {
       ) : (
         <div className="space-y-4">
           {/* 1 — Aplikasi */}
-          <Section icon={Globe} title="Aplikasi" color="blue">
+          <Section icon={GlobeAltIcon} title="Aplikasi" color="blue">
             <SettingField fieldKey="app_name" label="Nama Aplikasi" value={settings.app_name} onChange={set} hint="Nama yang tampil di header dan email" />
             <SettingField fieldKey="support_email" label="Email Support" type="email" value={settings.support_email} onChange={set} />
             <SettingField fieldKey="support_phone" label="No. Telepon Support" type="tel" value={settings.support_phone} onChange={set} />
@@ -252,7 +252,7 @@ export default function Settings() {
           </Section>
 
           {/* 2 — Biaya Platform */}
-          <Section icon={DollarSign} title="Biaya Platform" color="emerald">
+          <Section icon={CurrencyDollarIcon} title="Biaya Platform" color="emerald">
             <SettingField
               fieldKey="fee_type"
               label="Tipe Biaya Layanan"
@@ -274,7 +274,7 @@ export default function Settings() {
           </Section>
 
           {/* 3 — Pembayaran */}
-          <Section icon={CreditCard} title="Pembayaran & Midtrans" color="violet">
+          <Section icon={CreditCardIcon} title="Pembayaran & Midtrans" color="violet">
             <SettingField
               fieldKey="payment_timeout"
               label="Batas Waktu Pembayaran (menit)"
@@ -295,7 +295,7 @@ export default function Settings() {
           </Section>
 
           {/* 4 — Paket Langganan */}
-          <Section icon={Package} title="Harga Paket Langganan" color="amber">
+          <Section icon={ArchiveBoxIcon} title="Harga Paket Langganan" color="amber">
             <SettingField fieldKey="price_starter" label="Harga Paket Starter (Rp)" type="number" value={settings.price_starter} onChange={set} />
             <SettingField fieldKey="price_professional" label="Harga Paket Professional (Rp)" type="number" value={settings.price_professional} onChange={set} />
             <SettingField fieldKey="price_enterprise" label="Harga Paket Enterprise (Rp)" type="number" value={settings.price_enterprise} onChange={set} />
@@ -303,7 +303,7 @@ export default function Settings() {
           </Section>
 
           {/* 5 — Fitur Paket */}
-          <Section icon={Clock} title="Deskripsi Fitur Paket" color="rose" defaultOpen={false}>
+          <Section icon={ClockIcon} title="Deskripsi Fitur Paket" color="rose" defaultOpen={false}>
             <div className="col-span-2">
               <p className="text-xs text-gray-400 mb-4">
                 Fitur ini ditampilkan di halaman pilihan paket langganan Owner. Pisahkan setiap fitur dengan koma (,).
@@ -335,7 +335,7 @@ export default function Settings() {
 
           {/* Info Box */}
           <div className="rounded-xl bg-amber-50 border border-amber-200 p-4 flex gap-3">
-            <AlertTriangle size={18} className="text-amber-500 flex-shrink-0 mt-0.5" />
+            <ExclamationTriangleIcon className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-medium text-amber-800">Catatan Penting</p>
               <p className="text-xs text-amber-600 mt-1">
