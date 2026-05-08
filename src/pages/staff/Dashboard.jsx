@@ -51,8 +51,8 @@ export default function StaffDashboard() {
   return (
     <div className="space-y-5 max-w-3xl">
       <div>
-        <h1 className="text-xl font-bold text-gray-800">Dashboard Order</h1>
-        <p className="text-sm text-gray-400">Real-time pesanan masuk · auto-refresh 30 detik</p>
+        <h1 className="text-xl font-bold text-gray-800">Kelola Pesanan</h1>
+        <p className="text-sm text-gray-500">Pembaruan otomatis setiap 30 detik</p>
       </div>
 
       {/* Tabs */}
@@ -64,10 +64,10 @@ export default function StaffDashboard() {
             className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors -mb-px ${
               activeTab === tab.value
                 ? 'border-[#2D6A4F] text-[#2D6A4F]'
-                : 'border-transparent text-gray-400 hover:text-gray-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
-            <span>{tab.icon}</span> {tab.label}
+            {tab.label}
             {tab.value === 'paid' && orders.length > 0 && activeTab === 'paid' && (
               <span className="bg-[#F4845F] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
                 {orders.length}
@@ -81,7 +81,10 @@ export default function StaffDashboard() {
       {isLoading ? (
         <SkeletonList count={3} />
       ) : orders.length === 0 ? (
-        <EmptyState icon="📭" title="Tidak ada pesanan" description={`Tidak ada pesanan dengan status ini`} />
+        <EmptyState
+          title={activeTab === 'paid' ? 'Belum ada pesanan baru' : activeTab === 'processing' ? 'Tidak ada pesanan yang sedang diproses' : 'Belum ada pesanan selesai'}
+          description="Data diperbarui otomatis setiap 30 detik."
+        />
       ) : (
         <div className="space-y-3">
           {orders.map((order) => (
@@ -89,16 +92,16 @@ export default function StaffDashboard() {
               {/* Header */}
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="text-xs font-mono text-gray-400">#{order.order_number}</p>
+                  <p className="text-xs font-mono text-gray-500">#{order.order_number}</p>
                   <p className="text-sm font-bold text-gray-800 mt-0.5">
-                    👤 {order.user?.full_name ?? 'Customer'}
+                    {order.user?.full_name ?? 'Pelanggan'}
                   </p>
                 </div>
                 <div className="text-right">
                   <Badge variant={STATUS_COLOR[order.status] ?? 'gray'} dot>
-                    {order.status === 'paid' ? 'Baru' : order.status === 'processing' ? 'Diproses' : 'Selesai'}
+                    {order.status === 'paid' ? 'Pesanan Baru' : order.status === 'processing' ? 'Sedang Diproses' : 'Selesai'}
                   </Badge>
-                  <p className="text-xs text-gray-400 mt-1">{formatRelative(order.created_at)}</p>
+                  <p className="text-xs text-gray-500 mt-1">{formatRelative(order.created_at)}</p>
                 </div>
               </div>
 
@@ -111,8 +114,8 @@ export default function StaffDashboard() {
                   </div>
                 ))}
                 {order.notes && (
-                  <p className="text-xs text-orange-600 mt-2 pt-2 border-t border-gray-200">
-                    📝 {order.notes}
+                  <p className="text-xs text-orange-700 mt-2 pt-2 border-t border-gray-200">
+                    <span className="font-medium">Catatan:</span> {order.notes}
                   </p>
                 )}
               </div>
@@ -124,13 +127,13 @@ export default function StaffDashboard() {
                   {order.status === 'paid' && (
                     <Button size="sm" variant="primary" loading={isPending}
                       onClick={() => handleProcess(order.id)}>
-                      🍳 Proses
+                      Proses Pesanan
                     </Button>
                   )}
                   {order.status === 'processing' && (
                     <Button size="sm" variant="secondary" loading={isPending}
                       onClick={() => handleComplete(order.id)}>
-                      ✅ Selesai
+                      Tandai Selesai
                     </Button>
                   )}
                 </div>

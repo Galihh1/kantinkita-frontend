@@ -39,8 +39,8 @@ export default function Subscription() {
     const isNowActive   = data?.is_active;
     if (prevStatusRef.current === 'pending' && isNowActive) {
       toast.success(
-        '🎉 Langganan Anda telah disetujui oleh Admin! Silakan refresh halaman.',
-        { duration: 8000, icon: '✅' }
+        'Langganan Anda telah disetujui. Silakan muat ulang halaman untuk memperbarui akses.',
+        { duration: 8000 }
       );
       qc.invalidateQueries({ queryKey: ['owner-subscription-status'] });
     }

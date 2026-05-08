@@ -104,9 +104,9 @@ export function isActiveStatus(status) {
 }
 
 export const STAFF_FILTER_TABS = [
-  { value: 'paid',       label: 'Baru',      icon: '🔔' },
-  { value: 'processing', label: 'Diproses',  icon: '🍳' },
-  { value: 'completed',  label: 'Selesai',   icon: '✅' },
+  { value: 'paid',       label: 'Pesanan Baru'  },
+  { value: 'processing', label: 'Sedang Diproses' },
+  { value: 'completed',  label: 'Selesai'        },
 ];
 
 export const CUSTOMER_FILTER_TABS = [

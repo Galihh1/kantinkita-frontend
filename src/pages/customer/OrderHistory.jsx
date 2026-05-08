@@ -47,9 +47,9 @@ export default function OrderHistory() {
       {isLoading ? (
         <SkeletonList count={4} />
       ) : isError ? (
-        <EmptyState icon="⚠️" title="Gagal memuat pesanan" description="Coba lagi beberapa saat" />
+        <EmptyState title="Gagal memuat riwayat pesanan" description="Periksa koneksi Anda, lalu muat ulang halaman." />
       ) : orders.length === 0 ? (
-        <EmptyState icon="📦" title="Belum ada pesanan" description="Pesan makanan favoritmu sekarang!" />
+        <EmptyState icon="📦" title="Belum ada pesanan" description="Pesanan yang Anda buat akan tampil di sini." />
       ) : (
         <div className="space-y-3">
           {orders.map((order) => (
